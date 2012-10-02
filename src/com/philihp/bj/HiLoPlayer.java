@@ -8,7 +8,9 @@ import java.util.Map;
 import static com.philihp.bj.Card.*;
 import static com.philihp.bj.Response.*;
 
-public class ZeroMemoryPlayer implements Player {
+public class HiLoPlayer implements Player {
+	
+	private int count = 0;;
 
 	private static final Response[][] HARD_RESPONSE = {
 		{ H, H, H, H, H, H, H, H, H, H },
@@ -54,12 +56,12 @@ public class ZeroMemoryPlayer implements Player {
 		{ P, P, P, P, P, P, P, P, P, P }
 	};
 	
-	public ZeroMemoryPlayer() {
+	public HiLoPlayer() {
 	}
 
 	public int bet() {
-		return 1; // 15
-		//max is 2000
+		if(count > -14) return 1;
+		else return 100;
 	}
 	
 	public Response prompt(Hand playerHand, Hand dealerHand, boolean canSplit) {
@@ -95,9 +97,37 @@ public class ZeroMemoryPlayer implements Player {
 	}
 	
 	public void notify(Card card) {
+		switch(card) {
+		case _2:
+		case _3:
+		case _4:
+		case _5:
+		case _6:
+			count++;
+			break;
+		case _7:
+		case _8:
+		case _9:
+			break;
+		case _A:
+		case _T:
+		case _J:
+		case _K:
+		case _Q:
+			count--;
+		}
 	}
 	
 	public void resetCount(int decks) {
+		switch(decks) {
+		case 1 : count = -1; break;
+		case 2 : count = -5; break;
+		case 3 :
+		case 4 : count = -12; break;
+		case 5 :
+		case 6 : count = -20; break;
+		default: count = -27; break;
+		}
 	}
 	
 }

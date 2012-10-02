@@ -6,7 +6,7 @@ import java.util.List;
 public class Hand extends ArrayList<Card>{
 	
 	private int value;
-	private boolean soft;
+	private int softAces;
 	private boolean split;
 	private boolean pair;
 	private int bet;
@@ -14,12 +14,12 @@ public class Hand extends ArrayList<Card>{
 	public Hand(int bet, Card holeCard, Card showCard, boolean split) {
 		super();
 		value = 0;
-		soft = false;
+		softAces = 0;
 		this.bet = bet;
 		this.split = split;
 		add(showCard);
 		add(holeCard);
-		pair = holeCard.getFace() == showCard.getFace();
+		pair = holeCard == showCard;
 	}
 	
 	public Hand(Card holeCard, Card showCard) {
@@ -39,11 +39,14 @@ public class Hand extends ArrayList<Card>{
 	}
 	
 	public boolean canDoubleDown() {
-		return size() == 2 && !split && (getValue() == 10 || getValue() == 11);
+		if(size() != 2) return false;
+		if(split && !Blackjack.DOUBLE_AFTER_SPLIT) return false;
+		int value = getValue();
+		return (value == 10 || value == 11);
 	}
 	
 	public boolean isBlackjack() {
-		return size() == 2 && !split && getValue() == 21;
+		return size() == 2 && getValue() == 21;
 	}
 	
 	public Card getShowCard() {
@@ -53,12 +56,13 @@ public class Hand extends ArrayList<Card>{
 	
 	@Override
 	public boolean add(Card card) {
-		if(card.getFace() == Face._A)
-			soft = true;
-		addValue(card.getFace().getValue());
+		if(card == Card._A)
+			softAces++;
+		addValue(card.getValue());
+		
 		if(getValue() > 21 && isSoft()) {
-			addValue(getValue() - 10);
-			setSoft(false);
+			addValue(-10);
+			softAces--;
 		}
 		return super.add(card);
 	}
@@ -71,12 +75,8 @@ public class Hand extends ArrayList<Card>{
 		return value;
 	}
 	
-	private void setSoft(boolean soft) {
-		this.soft = soft;
-	}
-	
 	public boolean isSoft() {
-		return soft;
+		return softAces > 0;
 	}
 	
 	public boolean isPair() {

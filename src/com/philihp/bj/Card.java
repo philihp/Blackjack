@@ -1,29 +1,32 @@
 package com.philihp.bj;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
 
-public class Card {
-
-	private final Face face;
-	private final Suit suit;
+public enum Card {
+	_2(2),
+	_3(3),
+	_4(4),
+	_5(5),
+	_6(6),
+	_7(7),
+	_8(8),
+	_9(9),
+	_T(10),
+	_J(10),
+	_Q(10),
+	_K(10),
+	_A(11);
 	
-	public Card(Suit suit, Face face) {
-		this.suit = suit;
-		this.face = face;
+	private int value;
+	private Card(int value) {
+		this.value = value;
 	}
-
-	public Face getFace() {
-		return this.face;
+	public int getValue() {
+		return this.value;
 	}
-	public Suit getSuit() {
-		return this.suit;
-	}
-
+	
 	public String toString() {
-		return ""+suit.toString()+face.toString()+"";
+		return this.name().substring(1);
 	}
-	
+	public int getTableOrdinal() {
+		return this.getValue()-2;
+	}
 }
