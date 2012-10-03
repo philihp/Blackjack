@@ -22,8 +22,8 @@ public class ZeroMemoryPlayer implements Player {
 		{ H, H, S, S, S, H, H, H, H, H }, //12
 		{ S, S, S, S, S, H, H, H, H, H }, //13
 		{ S, S, S, S, S, H, H, H, H, H }, //14
-		{ S, S, S, S, S, H, H, H, H, H }, //15
-		{ S, S, S, S, S, H, H, H, H, H }, //16
+		{ S, S, S, S, S, H, H, H,RH, H }, //15
+		{ S, S, S, S, S, H, H,RH,RH,RH }, //16
 		{ S, S, S, S, S, S, S, S, S, S }, //17
 		{ S, S, S, S, S, S, S, S, S, S }, //18
 		{ S, S, S, S, S, S, S, S, S, S }, //19
@@ -36,17 +36,17 @@ public class ZeroMemoryPlayer implements Player {
 		{ H, H,DH,DH,DH, H, H, H, H, H }, //15
 		{ H, H,DH,DH,DH, H, H, H, H, H }, //16
 		{ H,DH,DH,DH,DH, H, H, H, H, H }, //17
-		{DS,DS,DS,DS,DS, S, S, H, H, H }, //18
-		{ S, S, S, S,DS, S, S, S, S, S }, //19
+		{ S,DS,DS,DS,DS, S, S, H, H, H }, //18
+		{ S, S, S, S, S, S, S, S, S, S }, //19
 		{ S, S, S, S, S, S, S, S, S, S }, //20
 		{ S, S, S, S, S, S, S, S, S, S }  //21
 	};
 	private static final Response[][] PAIR_RESPONSE = {
-		{ H, H, P, P, P, P, H, H, H, H }, //2
-		{ H, H, P, P, P, P, H, H, H, H }, //3
-		{ H, H, H, H, H, H, H, H, H, H }, //4
+		{ P, P, P, P, P, P, H, H, H, H }, //2
+		{ P, P, P, P, P, P, H, H, H, H }, //3
+		{ H, H, H, P, P, H, H, H, H, H }, //4
 		{DH,DH,DH,DH,DH,DH,DH,DH, H, H }, //5
-		{ H, P, P, P, P, H, H, H, H, H }, //6
+		{ P, P, P, P, P, H, H, H, H, H }, //6
 		{ P, P, P, P, P, P, H, H, H, H }, //7
 		{ P, P, P, P, P, P, P, P, P, P }, //8
 		{ P, P, P, P, P, S, P, P, S, S }, //9

@@ -84,9 +84,9 @@ public class Blackjack {
 		}
 		
 		System.out.println("Hands Played:    "+handsPlayed);
-		System.out.println("Money:           "+money);
+		System.out.println("Money Delta:     "+money);
 		System.out.println("Min-Bet:         "+MIN_BET);
-		System.out.println("House Edge %:    "+(100*(double)money / (handsPlayed * MIN_BET)));
+		System.out.println("House Edge %:    "+(-100*(double)money / (handsPlayed * MIN_BET)));
 		System.out.println("...in "+((float)(System.nanoTime()-startTime)/1000000000f)+" seconds");
 	}
 
