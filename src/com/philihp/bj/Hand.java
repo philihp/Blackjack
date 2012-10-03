@@ -10,6 +10,7 @@ public class Hand extends ArrayList<Card>{
 	private boolean split;
 	private boolean pair;
 	private int bet;
+	private boolean surrendered;
 
 	public Hand(int bet, Card holeCard, Card showCard, boolean split) {
 		super();
@@ -20,6 +21,7 @@ public class Hand extends ArrayList<Card>{
 		add(showCard);
 		add(holeCard);
 		pair = holeCard == showCard;
+		surrendered = false;
 	}
 	
 	public Hand(Card holeCard, Card showCard) {
@@ -40,9 +42,10 @@ public class Hand extends ArrayList<Card>{
 	
 	public boolean canDoubleDown() {
 		if(size() != 2) return false;
-		if(split && !Blackjack.DOUBLE_AFTER_SPLIT) return false;
-		int value = getValue();
-		return (value == 10 || value == 11);
+		if(split && Blackjack.DOUBLE_AFTER_SPLIT == false) return false;
+		return true;
+//		int value = getValue();
+//		return (value == 10 || value == 11);
 	}
 	
 	public boolean isBlackjack() {
@@ -89,6 +92,10 @@ public class Hand extends ArrayList<Card>{
 			s.append(card.toString());
 		}
 		return s.toString();
+	}
+	
+	public void surrender() {
+		surrendered = true;
 	}
 	
 }

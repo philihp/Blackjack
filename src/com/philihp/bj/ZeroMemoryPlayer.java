@@ -11,54 +11,54 @@ import static com.philihp.bj.Response.*;
 public class ZeroMemoryPlayer implements Player {
 
 	private static final Response[][] HARD_RESPONSE = {
-		{ H, H, H, H, H, H, H, H, H, H },
-		{ H, H, H, H, H, H, H, H, H, H },
-		{ H, H, H, H, H, H, H, H, H, H },
-		{ H, H, H, H, H, H, H, H, H, H },
-		{ H, H, H, H, H, H, H, H, H, H },
-		{ H,DH,DH,DH,DH, H, H, H, H, H },
-		{DH,DH,DH,DH,DH,DH,DH,DH, H, H },
-		{DH,DH,DH,DH,DH,DH,DH,DH,DH,DH },
-		{ H, H, S, S, S, H, H, H, H, H },
-		{ S, S, S, S, S, H, H, H, H, H },
-		{ S, S, S, S, S, H, H, H, H, H },
-		{ S, S, S, S, S, H, H, H, H, H },
-		{ S, S, S, S, S, H, H, H, H, H },
-		{ S, S, S, S, S, S, S, S, S, S },
-		{ S, S, S, S, S, S, S, S, S, S },
-		{ S, S, S, S, S, S, S, S, S, S },
-		{ S, S, S, S, S, S, S, S, S, S },
-		{ S, S, S, S, S, S, S, S, S, S }
+		{ H, H, H, H, H, H, H, H, H, H }, //4
+		{ H, H, H, H, H, H, H, H, H, H }, //5
+		{ H, H, H, H, H, H, H, H, H, H }, //6
+		{ H, H, H, H, H, H, H, H, H, H }, //7
+		{ H, H, H, H, H, H, H, H, H, H }, //8
+		{ H,DH,DH,DH,DH, H, H, H, H, H }, //9
+		{DH,DH,DH,DH,DH,DH,DH,DH, H, H }, //10
+		{DH,DH,DH,DH,DH,DH,DH,DH,DH,DH }, //11
+		{ H, H, S, S, S, H, H, H, H, H }, //12
+		{ S, S, S, S, S, H, H, H, H, H }, //13
+		{ S, S, S, S, S, H, H, H, H, H }, //14
+		{ S, S, S, S, S, H, H, H, H, H }, //15
+		{ S, S, S, S, S, H, H, H, H, H }, //16
+		{ S, S, S, S, S, S, S, S, S, S }, //17
+		{ S, S, S, S, S, S, S, S, S, S }, //18
+		{ S, S, S, S, S, S, S, S, S, S }, //19
+		{ S, S, S, S, S, S, S, S, S, S }, //20
+		{ S, S, S, S, S, S, S, S, S, S }  //21
 	};
 	private static final Response[][] SOFT_RESPONSE = {
-		{ H, H, H,DH,DH, H, H, H, H, H },
-		{ H, H, H,DH,DH, H, H, H, H, H },
-		{ H, H,DH,DH,DH, H, H, H, H, H },
-		{ H, H,DH,DH,DH, H, H, H, H, H },
-		{ H,DH,DH,DH,DH, H, H, H, H, H },
-		{DS,DS,DS,DS,DS, S, S, H, H, H },
-		{ S, S, S, S,DS, S, S, S, S, S },
-		{ S, S, S, S, S, S, S, S, S, S },
-		{ S, S, S, S, S, S, S, S, S, S }
+		{ H, H, H,DH,DH, H, H, H, H, H }, //13
+		{ H, H, H,DH,DH, H, H, H, H, H }, //14
+		{ H, H,DH,DH,DH, H, H, H, H, H }, //15
+		{ H, H,DH,DH,DH, H, H, H, H, H }, //16
+		{ H,DH,DH,DH,DH, H, H, H, H, H }, //17
+		{DS,DS,DS,DS,DS, S, S, H, H, H }, //18
+		{ S, S, S, S,DS, S, S, S, S, S }, //19
+		{ S, S, S, S, S, S, S, S, S, S }, //20
+		{ S, S, S, S, S, S, S, S, S, S }  //21
 	};
 	private static final Response[][] PAIR_RESPONSE = {
-		{ H, H, P, P, P, P, H, H, H, H },
-		{ H, H, P, P, P, P, H, H, H, H },
-		{ H, H, H, H, H, H, H, H, H, H },
-		{DH,DH,DH,DH,DH,DH,DH,DH, H, H },
-		{ H, P, P, P, P, H, H, H, H, H },
-		{ P, P, P, P, P, P, H, H, H, H },
-		{ P, P, P, P, P, P, P, P, P, P },
-		{ P, P, P, P, P, S, P, P, S, S },
-		{ S, S, S, S, S, S, S, S, S, S },
-		{ P, P, P, P, P, P, P, P, P, P }
+		{ H, H, P, P, P, P, H, H, H, H }, //2
+		{ H, H, P, P, P, P, H, H, H, H }, //3
+		{ H, H, H, H, H, H, H, H, H, H }, //4
+		{DH,DH,DH,DH,DH,DH,DH,DH, H, H }, //5
+		{ H, P, P, P, P, H, H, H, H, H }, //6
+		{ P, P, P, P, P, P, H, H, H, H }, //7
+		{ P, P, P, P, P, P, P, P, P, P }, //8
+		{ P, P, P, P, P, S, P, P, S, S }, //9
+		{ S, S, S, S, S, S, S, S, S, S }, //T
+		{ P, P, P, P, P, P, P, P, P, P }  //A
 	};
 	
 	public ZeroMemoryPlayer() {
 	}
 
 	public int bet() {
-		return 1; // 15
+		return Blackjack.MIN_BET*1; // 15
 		//max is 2000
 	}
 	

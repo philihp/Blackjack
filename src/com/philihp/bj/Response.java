@@ -5,5 +5,6 @@ public enum Response {
 	S, // Stay
 	DH, // Double & Hit
 	DS, // Double & Stay
-	P; // Split
+	P, // Split
+	RH; //Surrender if possible, otherwise Hit
 }

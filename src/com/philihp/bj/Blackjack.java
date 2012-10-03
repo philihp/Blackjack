@@ -13,7 +13,7 @@ public class Blackjack {
 	/**
 	 * Dealer Hits or Stands on a soft 17
 	 */
-	public static Response SOFT17 = Response.H;
+	public static Response SOFT17 = Response.S;
 	
 	/**
 	 * Blackjack Payout
@@ -23,7 +23,14 @@ public class Blackjack {
 	/**
 	 * Can Double-Down after Split?
 	 */
-	public static boolean DOUBLE_AFTER_SPLIT = false;
+	public static boolean DOUBLE_AFTER_SPLIT = true;
+	
+	/**
+	 * Amount of penetration into the shoe. 0.75 would mean to play 75% of the shoe.
+	 */
+	public static float CUT_CARD_PENETRATION = 0.66667f;
+	
+	public static int MIN_BET = 10;
 	
 	/**
 	 * House limit on number of resplits (max this many hands)
@@ -33,29 +40,36 @@ public class Blackjack {
 	public static Random random;
 
 	public static void main(String[] args) {
+
+		random = new Random();
+		int seconds = 0;
 		long startTime = System.nanoTime();
 		if (args.length == 1) {
-			random = new Random(Integer.parseInt(args[0]));
-		} else {
-			random = new Random();
+			seconds = Integer.parseInt(args[0]);
+			System.out.println("Running for "+seconds+" seconds...");
 		}
 
-
-		Player player = new REKOPlayer();
+		Player player = new ZeroMemoryPlayer();
 		Player dealer = new DealerPlayer();
-		float money = 0; // 1,000,000
-		int handsPlayed = 0;
+		long money = 0; // 1,000,000
+		long handsPlayed = 0;
 		
-		for(int shoesPlayed = 0;shoesPlayed < 1000000; shoesPlayed++) {
+		for(;;) {
 			Deck deck = new Deck(random, SHOE_SIZE, player);
 			player.resetCount(SHOE_SIZE);
-			while ((float)deck.size() / deck.getInitialSize() > 0.50f) {
+			while ((float)deck.size() / deck.getInitialSize() > CUT_CARD_PENETRATION) {
 				handsPlayed++;
 	
 				List<Hand> playerHands = new ArrayList<Hand>(1);
 				playerHands.add(new Hand(player.bet(), deck.draw(), deck.draw(), false));
 				Hand dealerHand = new Hand(deck.draw(), deck.draw());
 				money -= playerHands.get(0).getBet();
+				
+				if(dealerHand.getValue() == 21) {
+					//dealer has blackjack. do not play out hands, just leave money on
+					//table and start over.
+					continue;
+				}
 				
 				money += playoutPlayer(player, deck, playerHands, dealerHand);
 	
@@ -65,12 +79,15 @@ public class Blackjack {
 					money += payout(playerHand, dealerHand);
 				}
 			}
+			
+			if((System.nanoTime()-startTime) / 1000000000f > seconds) break;
 		}
 		
 		System.out.println("Hands Played:    "+handsPlayed);
 		System.out.println("Money:           "+money);
-		System.out.println("House Edge:      "+(-100*money/handsPlayed)+"%");
-		System.out.println("...in "+((System.nanoTime()-startTime)/10000000/100f)+" seconds");
+		System.out.println("Min-Bet:         "+MIN_BET);
+		System.out.println("House Edge %:    "+(100*(double)money / (handsPlayed * MIN_BET)));
+		System.out.println("...in "+((float)(System.nanoTime()-startTime)/1000000000f)+" seconds");
 	}
 
 	private static float playoutPlayer(Player player, Deck deck,
@@ -79,17 +96,26 @@ public class Blackjack {
 		float money = 0;
 		do {
 			Hand playerHand = playerHands.get(i);
+			boolean tryToSurrender = false;
 			dealPlayer: for (;;) {
 				switch (player.prompt(playerHand, dealerHand, playerHands.size() < LIMIT_ON_RESPLITS)) {
+				case RH:
+					tryToSurrender = true;
 				case DH:
-					if(playerHand.canDoubleDown()) {
+					if(tryToSurrender == true) {
+						if(playerHand.size() == 2 && playerHand.isSplit() == false) {
+							playerHand.surrender();
+							money += playerHand.getBet() / 2;
+							break dealPlayer;
+						}
+					}
+					else if(playerHand.canDoubleDown()) {
 						int bet = playerHand.getBet();
 						money -= bet;
 						playerHand.addBet(bet);
 						playerHand.add(deck.draw());
 						break dealPlayer;
 					}
-					// else just fall through to Hit
 				case H:
 					playerHand.add(deck.draw());
 					break;
@@ -136,7 +162,7 @@ public class Blackjack {
 		}
 	}
 
-	private static float payout(Hand playerHand,
+	private static int payout(Hand playerHand,
 			Hand dealerHand) {
 		if(playerHand.isBlackjack() && dealerHand.isBlackjack()) {
 			//System.out.println("--- \tPush, both blackjacks");
@@ -144,7 +170,7 @@ public class Blackjack {
 		}
 		else if(playerHand.isBlackjack() && dealerHand.isBlackjack() == false) {
 			//System.out.println("Win \tPlayer BJ "+playerHand);
-			return playerHand.getBet()*(1+BLACKJACK_PAYOUT);
+			return (int)(playerHand.getBet()*(1+BLACKJACK_PAYOUT));
 		}
 		else if(playerHand.isBlackjack() == false && dealerHand.isBlackjack()) {
 			//System.out.println("Lose \tDealer BJ "+dealerHand);

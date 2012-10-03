@@ -20,7 +20,7 @@ public class HiLoPlayer implements Player {
 		{ H, H, H, H, H, H, H, H, H, H },
 		{ H,DH,DH,DH,DH, H, H, H, H, H },
 		{DH,DH,DH,DH,DH,DH,DH,DH, H, H },
-		{DH,DH,DH,DH,DH,DH,DH,DH,DH,DH },
+		{DH,DH,DH,DH,DH,DH,DH,DH,DH, H },
 		{ H, H, S, S, S, H, H, H, H, H },
 		{ S, S, S, S, S, H, H, H, H, H },
 		{ S, S, S, S, S, H, H, H, H, H },
@@ -44,11 +44,11 @@ public class HiLoPlayer implements Player {
 		{ S, S, S, S, S, S, S, S, S, S }
 	};
 	private static final Response[][] PAIR_RESPONSE = {
-		{ H, H, P, P, P, P, H, H, H, H },
-		{ H, H, P, P, P, P, H, H, H, H },
-		{ H, H, H, H, H, H, H, H, H, H },
+		{ P, P, P, P, P, P, H, H, H, H },
+		{ P, P, P, P, P, P, H, H, H, H },
+		{ H, H, H, P, P, H, H, H, H, H },
 		{DH,DH,DH,DH,DH,DH,DH,DH, H, H },
-		{ H, P, P, P, P, H, H, H, H, H },
+		{ P, P, P, P, P, H, H, H, H, H },
 		{ P, P, P, P, P, P, H, H, H, H },
 		{ P, P, P, P, P, P, P, P, P, P },
 		{ P, P, P, P, P, S, P, P, S, S },
@@ -65,35 +65,30 @@ public class HiLoPlayer implements Player {
 	}
 	
 	public Response prompt(Hand playerHand, Hand dealerHand, boolean canSplit) {
+		Response response = null;
 		if(playerHand.isPair()) {
-			if(canSplit) {
-				return PAIR_RESPONSE
-						[playerHand.getShowCard().getTableOrdinal()]
-						[dealerHand.getShowCard().getTableOrdinal()];
-			}
-			else {
-				//if we can't split because of a limit on resplitting,
-				//treat the hand as a hard total
-				try {
-				return HARD_RESPONSE
-						[playerHand.getValue()-4]
-						[dealerHand.getShowCard().getTableOrdinal()];
-				}catch(ArrayIndexOutOfBoundsException e) {
-					throw new RuntimeException(playerHand.toString() + " - " +playerHand.getValue());
-				}
-			}
+			response = PAIR_RESPONSE
+					[playerHand.getShowCard().getTableOrdinal()]
+					[dealerHand.getShowCard().getTableOrdinal()];
 		}
 		else if(playerHand.isSoft()) {
-			return SOFT_RESPONSE
+			response = SOFT_RESPONSE
 					[playerHand.getValue()-13]
 					[dealerHand.getShowCard().getTableOrdinal()];
 		}
 		else {
-			if(playerHand.getValue()-4 == 30) System.out.println(playerHand);
-			return HARD_RESPONSE
+			response = HARD_RESPONSE
 					[playerHand.getValue()-4]
 					[dealerHand.getShowCard().getTableOrdinal()];
 		}
+
+		if(response == Response.P && canSplit == false) {
+			response = HARD_RESPONSE
+					[playerHand.getValue()-4]
+					[dealerHand.getShowCard().getTableOrdinal()];
+		}
+		
+		return response;
 	}
 	
 	public void notify(Card card) {
