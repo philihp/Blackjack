@@ -151,20 +151,13 @@ public class Blackjack {
 	}
 
 	private static void playoutDealer(Deck deck, Player dealer, Hand dealerHand) {
-		dealDealer: for (;;) {
-			switch (dealer.prompt(null, dealerHand, false)) {
-			case H:
-				dealerHand.add(deck.draw());
-				break;
-			case S:
-				break dealDealer;
-			default:
-				throw new RuntimeException("Dealer should never do anything but Hit or Stay. " + dealerHand);
-			}
-
-			if (dealerHand.getValue() > 21) // bust!
-				break dealDealer;
+		do {
+			Response response = dealer.prompt(null, dealerHand, false);
+			if(response == Response.H) dealerHand.add(deck.draw());
+			else if(response == Response.S) break;
+			else throw new RuntimeException("Dealer should never do anything but Hit or Stay. " + dealerHand);
 		}
+		while(dealerHand.getValue() <= 21); // bust
 	}
 
 	private static int payout(Hand playerHand,
