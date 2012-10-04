@@ -96,49 +96,54 @@ public class Blackjack {
 		float money = 0;
 		do {
 			Hand playerHand = playerHands.get(i);
-			boolean tryToSurrender = false;
-			dealPlayer: for (;;) {
-				switch (player.prompt(playerHand, dealerHand, playerHands.size() < LIMIT_ON_RESPLITS)) {
-				case RH:
-					tryToSurrender = true;
-				case DH:
-					if(tryToSurrender == true) {
-						if(playerHand.size() == 2 && playerHand.isSplit() == false) {
-							playerHand.surrender();
-							money += playerHand.getBet() / 2;
-							break dealPlayer;
-						}
+			
+			for(;;) {
+				Response response = player.prompt(playerHand, dealerHand, playerHands.size() < LIMIT_ON_RESPLITS);
+				if(response == Response.RH){
+					if(playerHand.size() == 2 && playerHand.isSplit() == false) {
+						playerHand.surrender();
+						break;
 					}
-					else if(playerHand.canDoubleDown()) {
-						int bet = playerHand.getBet();
-						money -= bet;
-						playerHand.addBet(bet);
-						playerHand.add(deck.draw());
-						break dealPlayer;
-					}
-				case H:
-					playerHand.add(deck.draw());
-					break;
-				case DS:
+					else response = Response.H;
+				}
+				if(response == Response.DH){
 					if(playerHand.canDoubleDown()) {
 						int bet = playerHand.getBet();
 						money -= bet;
 						playerHand.addBet(bet);
+						playerHand.add(deck.draw());
+						break;
 					}
-					// else just fall through to Stand
-				case S:
-					break dealPlayer;
-				case P:
+					else response = Response.H;
+				}
+				if(response == Response.H) {
+					playerHand.add(deck.draw());
+					if (playerHand.getValue() > 21) // bust!
+						break;
+					else
+						continue;
+				}
+				if(response == Response.DS) {
+					if(playerHand.canDoubleDown()) {
+						int bet = playerHand.getBet();
+						money -= bet;
+						playerHand.addBet(bet);
+						response = Response.S;
+					}
+					else response = Response.S;
+				}
+				if(response == Response.S) {
+					break;
+				}
+				if(response == Response.P) {
 					money -= playerHand.getBet();
 					Hand left = new Hand(playerHand.getBet(), playerHand.get(0), deck.draw(), true);
 					Hand right = new Hand(playerHand.getBet(), playerHand.get(1), deck.draw(), true);
-					playerHands.set(i--, left);
+					playerHands.set(i, left);
 					playerHands.add(right);
-					break dealPlayer;
+					playerHand = left;
+					continue;
 				}
-
-				if (playerHand.getValue() > 21) // bust!
-					break dealPlayer;
 			}
 		}
 		while(++i < playerHands.size());
@@ -164,7 +169,10 @@ public class Blackjack {
 
 	private static int payout(Hand playerHand,
 			Hand dealerHand) {
-		if(playerHand.isBlackjack() && dealerHand.isBlackjack()) {
+		if(playerHand.isSurrendered()) {
+			return playerHand.getBet() / 2;
+		}
+		else if(playerHand.isBlackjack() && dealerHand.isBlackjack()) {
 			//System.out.println("--- \tPush, both blackjacks");
 			return playerHand.getBet();
 		}

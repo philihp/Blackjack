@@ -98,4 +98,8 @@ public class Hand extends ArrayList<Card>{
 		surrendered = true;
 	}
 	
+	public boolean isSurrendered() {
+		return surrendered;
+	}
+	
 }
