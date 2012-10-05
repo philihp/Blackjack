@@ -106,9 +106,6 @@ public class HiLoPlayer implements Player {
 			break;
 		case _A:
 		case _T:
-		case _J:
-		case _K:
-		case _Q:
 			count--;
 		}
 	}

@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Hand extends ArrayList<Card>{
+public class Hand extends ArrayList<Card> implements Cloneable{
 	
 	private int value;
 	private int softAces;
@@ -11,17 +11,23 @@ public class Hand extends ArrayList<Card>{
 	private boolean pair;
 	private int bet;
 	private boolean surrendered;
+	
+	public Hand() {
+		value = 0;
+		softAces = 0;
+		bet = 0;
+		split = false;
+		surrendered = false;
+		pair = false;
+	}
 
 	public Hand(int bet, Card holeCard, Card showCard, boolean split) {
 		super();
-		value = 0;
-		softAces = 0;
 		this.bet = bet;
 		this.split = split;
 		add(showCard);
 		add(holeCard);
 		pair = holeCard == showCard;
-		surrendered = false;
 	}
 	
 	public Hand(Card holeCard, Card showCard) {

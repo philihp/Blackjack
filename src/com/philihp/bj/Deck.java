@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class Deck extends ArrayList<Card> {
+public class Deck extends ArrayList<Card> implements Cloneable {
 	
 	private static final int DECKSIZE = Card.values().length * Suit.values().length;
 	
@@ -24,9 +24,9 @@ public class Deck extends ArrayList<Card> {
 		add(Card._8);
 		add(Card._9);
 		add(Card._T);
-		add(Card._J);
-		add(Card._Q);
-		add(Card._K);
+		add(Card._T);
+		add(Card._T);
+		add(Card._T);
 		add(Card._A);
 		add(Card._2);
 		add(Card._3);
@@ -37,9 +37,9 @@ public class Deck extends ArrayList<Card> {
 		add(Card._8);
 		add(Card._9);
 		add(Card._T);
-		add(Card._J);
-		add(Card._Q);
-		add(Card._K);
+		add(Card._T);
+		add(Card._T);
+		add(Card._T);
 		add(Card._A);
 		add(Card._2);
 		add(Card._3);
@@ -50,9 +50,9 @@ public class Deck extends ArrayList<Card> {
 		add(Card._8);
 		add(Card._9);
 		add(Card._T);
-		add(Card._J);
-		add(Card._Q);
-		add(Card._K);
+		add(Card._T);
+		add(Card._T);
+		add(Card._T);
 		add(Card._A);
 		add(Card._2);
 		add(Card._3);
@@ -63,22 +63,24 @@ public class Deck extends ArrayList<Card> {
 		add(Card._8);
 		add(Card._9);
 		add(Card._T);
-		add(Card._J);
-		add(Card._Q);
-		add(Card._K);
+		add(Card._T);
+		add(Card._T);
+		add(Card._T);
 		add(Card._A);
 		this.initialSize = this.size();
 	}
 	
-	public Deck(Random randomizer, int numberOfDecks, Player player) {
+	public Deck(int numberOfDecks, Player player) {
 		super(DECKSIZE * numberOfDecks);
 		for(int i = 0; i < numberOfDecks; i++) {
 			addAll(new Deck());
 		}
-		Collections.shuffle(this, randomizer);
-		
 		this.initialSize = this.size();
 		this.player = player;
+	}
+	
+	public void shuffle(Random randomizer) {
+		Collections.shuffle(this, randomizer);
 	}
 
 	public int getInitialSize() {
@@ -90,4 +92,30 @@ public class Deck extends ArrayList<Card> {
 		player.notify(card);
 		return card;
 	}
+	
+	public double getProbability(Card card) {
+		short count = 0;
+		for(Card c : this) {
+			if(c == card) count++;
+		}
+		return (double)count / size();
+	}
+	
+	public boolean remove(Card card) {
+		for(int i = 0; i < size(); i++) {
+			Card c = get(i);
+			if(c == card) {
+				remove(i);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public Object clone() {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+	
 }

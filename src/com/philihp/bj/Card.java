@@ -10,9 +10,6 @@ public enum Card {
 	_8(8),
 	_9(9),
 	_T(10),
-	_J(10),
-	_Q(10),
-	_K(10),
 	_A(11);
 	
 	private int value;

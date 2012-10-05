@@ -13,7 +13,7 @@ public class Blackjack {
 	/**
 	 * Dealer Hits or Stands on a soft 17
 	 */
-	public static Response SOFT17 = Response.S;
+	public static Response SOFT17 = Response.H;
 	
 	/**
 	 * Blackjack Payout
@@ -37,11 +37,11 @@ public class Blackjack {
 	 */
 	public static int LIMIT_ON_RESPLITS = 4;
 
-	public static Random random;
+	public static Random randomizer;
 
 	public static void main(String[] args) {
 
-		random = new Random();
+		randomizer = new Random();
 		int seconds = 0;
 		long startTime = System.nanoTime();
 		if (args.length == 1) {
@@ -55,7 +55,8 @@ public class Blackjack {
 		long handsPlayed = 0;
 		
 		for(;;) {
-			Deck deck = new Deck(random, SHOE_SIZE, player);
+			Deck deck = new Deck(SHOE_SIZE, player);
+			deck.shuffle(randomizer);
 			player.resetCount(SHOE_SIZE);
 			while ((float)deck.size() / deck.getInitialSize() > CUT_CARD_PENETRATION) {
 				handsPlayed++;
@@ -84,9 +85,9 @@ public class Blackjack {
 		}
 		
 		System.out.println("Hands Played:    "+handsPlayed);
-		System.out.println("Money Delta:     "+money);
+		System.out.println("Money:           "+money);
 		System.out.println("Min-Bet:         "+MIN_BET);
-		System.out.println("House Edge %:    "+(-100*(double)money / (handsPlayed * MIN_BET)));
+		System.out.println("House Edge %:    "+(100*(double)money / (handsPlayed * MIN_BET)));
 		System.out.println("...in "+((float)(System.nanoTime()-startTime)/1000000000f)+" seconds");
 	}
 
