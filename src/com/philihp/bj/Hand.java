@@ -104,4 +104,8 @@ public class Hand extends ArrayList<Card> implements Cloneable{
 		surrendered = true;
 	}
 	
+	public boolean isSurrendered() {
+		return surrendered;
+	}
+	
 }

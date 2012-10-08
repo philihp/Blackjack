@@ -11,6 +11,7 @@ import static com.philihp.bj.Response.*;
 public class ZeroMemoryPlayer implements Player {
 
 	private static final Response[][] HARD_RESPONSE = {
+		//2  3  4  5  6  7  8  9 10  A
 		{ H, H, H, H, H, H, H, H, H, H }, //4
 		{ H, H, H, H, H, H, H, H, H, H }, //5
 		{ H, H, H, H, H, H, H, H, H, H }, //6
@@ -18,7 +19,7 @@ public class ZeroMemoryPlayer implements Player {
 		{ H, H, H, H, H, H, H, H, H, H }, //8
 		{ H,DH,DH,DH,DH, H, H, H, H, H }, //9
 		{DH,DH,DH,DH,DH,DH,DH,DH, H, H }, //10
-		{DH,DH,DH,DH,DH,DH,DH,DH,DH,DH }, //11
+		{DH,DH,DH,DH,DH,DH,DH,DH,DH, H }, //11 last could be DH?
 		{ H, H, S, S, S, H, H, H, H, H }, //12
 		{ S, S, S, S, S, H, H, H, H, H }, //13
 		{ S, S, S, S, S, H, H, H, H, H }, //14
@@ -31,6 +32,7 @@ public class ZeroMemoryPlayer implements Player {
 		{ S, S, S, S, S, S, S, S, S, S }  //21
 	};
 	private static final Response[][] SOFT_RESPONSE = {
+		//2  3  4  5  6  7  8  9 10  A
 		{ H, H, H,DH,DH, H, H, H, H, H }, //13
 		{ H, H, H,DH,DH, H, H, H, H, H }, //14
 		{ H, H,DH,DH,DH, H, H, H, H, H }, //15
@@ -42,16 +44,17 @@ public class ZeroMemoryPlayer implements Player {
 		{ S, S, S, S, S, S, S, S, S, S }  //21
 	};
 	private static final Response[][] PAIR_RESPONSE = {
-		{ P, P, P, P, P, P, H, H, H, H }, //2
-		{ P, P, P, P, P, P, H, H, H, H }, //3
-		{ H, H, H, P, P, H, H, H, H, H }, //4
-		{DH,DH,DH,DH,DH,DH,DH,DH, H, H }, //5
-		{ P, P, P, P, P, H, H, H, H, H }, //6
-		{ P, P, P, P, P, P, H, H, H, H }, //7
-		{ P, P, P, P, P, P, P, P, P, P }, //8
-		{ P, P, P, P, P, S, P, P, S, S }, //9
-		{ S, S, S, S, S, S, S, S, S, S }, //T
-		{ P, P, P, P, P, P, P, P, P, P }  //A
+		//2  3  4  5  6  7  8  9 10  A
+		{ P, P, P, P, P, P, H, H, H, H }, //2,2
+		{ P, P, P, P, P, P, H, H, H, H }, //3,3
+		{ H, H, H, P, P, H, H, H, H, H }, //4,4
+		{DH,DH,DH,DH,DH,DH,DH,DH, H, H }, //5,5 - never split 5s (or tens)
+		{ P, P, P, P, P, H, H, H, H, H }, //6,6
+		{ P, P, P, P, P, P, H, H, H, H }, //7,7
+		{ P, P, P, P, P, P, P, P, P, P }, //8,8
+		{ P, P, P, P, P, S, P, P, S, S }, //9,9
+		{ S, S, S, S, S, S, S, S, S, S }, //T,T
+		{ P, P, P, P, P, P, P, P, P, P }  //A,A
 	};
 	
 	public ZeroMemoryPlayer() {
