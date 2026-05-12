@@ -1,7 +1,5 @@
 package com.philihp.bj;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public final class Blackjack {
@@ -22,16 +20,25 @@ public final class Blackjack {
 
     public record Result(long handsPlayed, long money, double houseEdgePercent, double elapsedSeconds) { }
 
+    private static final int MAX_PLAYER_HANDS = 8;
+
     private final GameConfig config;
     private final Random randomizer;
     private final Player player;
     private final Player dealer;
+
+    private final Hand[] playerHandPool = new Hand[MAX_PLAYER_HANDS];
+    private final Hand dealerHand = new Hand();
+    private int numHands;
 
     public Blackjack(GameConfig config, Random randomizer, Player player) {
         this.config = config;
         this.randomizer = randomizer;
         this.player = player;
         this.dealer = new DealerPlayer(config.dealerSoft17());
+        for (int i = 0; i < MAX_PLAYER_HANDS; i++) {
+            playerHandPool[i] = new Hand();
+        }
     }
 
     public Result runForSeconds(double seconds) {
@@ -53,26 +60,27 @@ public final class Blackjack {
             Deck deck = new Deck(config.shoeSize(), player);
             deck.shuffle(randomizer);
             player.resetCount(config.shoeSize());
+            int cutCardThreshold = (int) (deck.getInitialSize() * config.cutCardPenetration());
 
-            while ((float) deck.size() / deck.getInitialSize() > config.cutCardPenetration()) {
+            while (deck.size() > cutCardThreshold) {
                 handsPlayed++;
 
-                List<Hand> playerHands = new ArrayList<>(1);
-                Hand initial = newHand(player.bet(), deck.draw(), deck.draw(), false);
-                playerHands.add(initial);
-                Hand dealerHand = newHand(0, deck.draw(), deck.draw(), false);
-                money -= playerHands.get(0).getBet();
+                numHands = 1;
+                Hand initial = playerHandPool[0];
+                resetHand(initial, player.bet(), deck.draw(), deck.draw(), false);
+                resetHand(dealerHand, 0, deck.draw(), deck.draw(), false);
+                money -= initial.getBet();
 
                 if (dealerHand.getValue() == 21) {
                     if (done.test(handsPlayed)) break outer;
                     continue;
                 }
 
-                money += playoutPlayer(deck, playerHands, dealerHand);
-                playoutDealer(deck, dealerHand);
+                money += playoutPlayer(deck);
+                playoutDealer(deck);
 
-                for (Hand h : playerHands) {
-                    money += payout(h, dealerHand);
+                for (int i = 0; i < numHands; i++) {
+                    money += payout(playerHandPool[i], dealerHand);
                 }
 
                 if (done.test(handsPlayed)) break outer;
@@ -105,14 +113,14 @@ public final class Blackjack {
         return playerHand.getBet();
     }
 
-    private float playoutPlayer(Deck deck, List<Hand> playerHands, Hand dealerHand) {
+    private float playoutPlayer(Deck deck) {
         int i = 0;
         float money = 0;
         do {
-            Hand playerHand = playerHands.get(i);
+            Hand playerHand = playerHandPool[i];
             while (true) {
                 Response response = player.prompt(
-                        playerHand, dealerHand, playerHands.size() < config.limitOnResplits());
+                        playerHand, dealerHand, numHands < config.limitOnResplits());
 
                 if (response == Response.RH) {
                     if (playerHand.size() == 2 && !playerHand.isSplit()) {
@@ -149,18 +157,20 @@ public final class Blackjack {
                 }
                 if (response == Response.P) {
                     money -= playerHand.getBet();
-                    Hand left = newHand(playerHand.getBet(), playerHand.get(0), deck.draw(), true);
-                    Hand right = newHand(playerHand.getBet(), playerHand.get(1), deck.draw(), true);
-                    playerHands.set(i, left);
-                    playerHands.add(right);
-                    playerHand = left;
+                    Card leftCard = playerHand.get(0);
+                    Card rightCard = playerHand.get(1);
+                    int bet = playerHand.getBet();
+                    Hand left = playerHand;
+                    Hand right = playerHandPool[numHands++];
+                    resetHand(left, bet, leftCard, deck.draw(), true);
+                    resetHand(right, bet, rightCard, deck.draw(), true);
                 }
             }
-        } while (++i < playerHands.size());
+        } while (++i < numHands);
         return money;
     }
 
-    private void playoutDealer(Deck deck, Hand dealerHand) {
+    private void playoutDealer(Deck deck) {
         while (true) {
             Response response = dealer.prompt(null, dealerHand, false);
             if (response == Response.H) {
@@ -174,10 +184,9 @@ public final class Blackjack {
         }
     }
 
-    private Hand newHand(int bet, Card holeCard, Card showCard, boolean split) {
-        Hand h = new Hand(bet, holeCard, showCard, split);
+    private void resetHand(Hand h, int bet, Card holeCard, Card showCard, boolean split) {
+        h.reset(bet, holeCard, showCard, split);
         h.setDoubleAfterSplitAllowed(config.doubleAfterSplit());
-        return h;
     }
 
     private static double elapsedSeconds(long startTime) {

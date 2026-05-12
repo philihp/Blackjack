@@ -1,29 +1,44 @@
 package com.philihp.bj;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class Hand extends ArrayList<Card> {
+public class Hand implements Iterable<Card> {
 
-    private static final long serialVersionUID = 1L;
+    private static final int MAX_CARDS = 12;
 
+    private final Card[] cards = new Card[MAX_CARDS];
+    private int size;
     private int value;
     private int softAces;
-    private final boolean split;
+    private boolean split;
     private boolean pair;
     private int bet;
     private boolean surrendered;
     private boolean doubleAfterSplitAllowed = true;
 
     public Hand(int bet, Card holeCard, Card showCard, boolean split) {
-        this.bet = bet;
-        this.split = split;
-        add(showCard);
-        add(holeCard);
-        this.pair = (holeCard == showCard);
+        reset(bet, holeCard, showCard, split);
     }
 
     public Hand(Card holeCard, Card showCard) {
         this(0, holeCard, showCard, false);
+    }
+
+    public Hand() {
+    }
+
+    public void reset(int bet, Card holeCard, Card showCard, boolean split) {
+        this.bet = bet;
+        this.split = split;
+        this.size = 0;
+        this.value = 0;
+        this.softAces = 0;
+        this.surrendered = false;
+        this.doubleAfterSplitAllowed = true;
+        addInternal(showCard);
+        addInternal(holeCard);
+        this.pair = (holeCard == showCard);
     }
 
     public int getBet() {
@@ -43,29 +58,41 @@ public class Hand extends ArrayList<Card> {
     }
 
     public boolean canDoubleDown() {
-        if (size() != 2) return false;
+        if (size != 2) return false;
         if (split && !doubleAfterSplitAllowed) return false;
         return true;
     }
 
     public boolean isBlackjack() {
-        return size() == 2 && getValue() == 21;
+        return size == 2 && value == 21;
     }
 
     public Card getShowCard() {
-        if (isEmpty()) throw new IllegalStateException("No card dealt yet");
-        return get(0);
+        if (size == 0) throw new IllegalStateException("No card dealt yet");
+        return cards[0];
     }
 
-    @Override
+    public Card get(int i) {
+        return cards[i];
+    }
+
+    public int size() {
+        return size;
+    }
+
     public boolean add(Card card) {
+        addInternal(card);
+        return true;
+    }
+
+    private void addInternal(Card card) {
         if (card == Card._A) softAces++;
         value += card.getValue();
         if (value > 21 && softAces > 0) {
             value -= 10;
             softAces--;
         }
-        return super.add(card);
+        cards[size++] = card;
     }
 
     public int getValue() {
@@ -83,7 +110,7 @@ public class Hand extends ArrayList<Card> {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder();
-        for (Card card : this) s.append(card);
+        for (int i = 0; i < size; i++) s.append(cards[i]);
         return s.toString();
     }
 
@@ -93,5 +120,17 @@ public class Hand extends ArrayList<Card> {
 
     public boolean isSurrendered() {
         return surrendered;
+    }
+
+    @Override
+    public Iterator<Card> iterator() {
+        return new Iterator<>() {
+            int i = 0;
+            @Override public boolean hasNext() { return i < size; }
+            @Override public Card next() {
+                if (i >= size) throw new NoSuchElementException();
+                return cards[i++];
+            }
+        };
     }
 }
